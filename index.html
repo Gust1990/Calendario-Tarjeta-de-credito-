@@ -12,9 +12,59 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Tarjetas">
 
-    <!-- Iconos SVG en Base64 -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCc+PHJlY3Qgd2lkdGg9JzI0JyBoZWlnaHQ9JzI0JyByeD0nNCcgZmlsbD0nIzJjM2U1MCcvPjxyZWN0IHg9JzInIHk9JzYnIHdpZHRoPTIwJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nI2ZmZicvPjxyZWN0IHg9JzInIHk9JzgnIHdpZHRoPTIwJyBoZWlnaHQ9JzMnIGZpbGw9JyNjMDM5MmInLz48cmVjdCB4PSc0JyB5PScxMycgd2lkdGg9JzQnIGhlaWdodD0nMicgZmlsbD0nIzI3YWU2MCcvPjwvc3ZnPg==">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCc+PHJlY3Qgd2lkdGg9JzI0JyBoZWlnaHQ9JzI0JyByeD0nNCcgZmlsbD0nIzJjM2U1MCcvPjxyZWN0IHg9JzInIHk9JzYnIHdpZHRoPTIwJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nI2ZmZicvPjxyZWN0IHg9JzInIHk9JzgnIHdpZHRoPTIwJyBoZWlnaHQ9JzMnIGZpbGw9JyNjMDM5MmInLz48cmVjdCB4PSc0JyB5PScxMycgd2lkdGg9JzQnIGhlaWdodD0nMicgZmlsbD0nIzI3YWU2MCcvPjwvc3ZnPg==">
+    <!-- Script que genera el icono PNG al instante para compatibilidad total -->
+    <script>
+        (function() {
+            // Creamos un canvas virtual
+            var canvas = document.createElement('canvas');
+            canvas.width = 192;
+            canvas.height = 192;
+            var ctx = canvas.getContext('2d');
+
+            // Función para dibujar rectángulos redondeados
+            function roundRect(x, y, w, h, r, color) {
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.arcTo(x + w, y, x + w, y + h, r);
+                ctx.arcTo(x + w, y + h, x, y + h, r);
+                ctx.arcTo(x, y + h, x, y, r);
+                ctx.arcTo(x, y, x + w, y, r);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Dibujamos el icono (Fondo azul)
+            roundRect(0, 0, 192, 192, 32, '#2c3e50');
+            // Base de la tarjeta (Blanco)
+            roundRect(16, 48, 160, 96, 16, '#ffffff');
+            
+            // Banda magnética (Roja)
+            ctx.fillStyle = '#c0392b';
+            ctx.fillRect(16, 68, 160, 20);
+            
+            // Chip de la tarjeta (Verde)
+            ctx.fillStyle = '#27ae60';
+            ctx.fillRect(32, 104, 32, 20);
+
+            // Convertimos el dibujo a PNG en Base64
+            var pngUrl = canvas.toDataURL('image/png');
+
+            // Asignamos el PNG a iOS
+            var linkApple = document.createElement('link');
+            linkApple.rel = 'apple-touch-icon';
+            linkApple.href = pngUrl;
+            document.head.appendChild(linkApple);
+
+            // Asignamos el PNG a Android/Chrome
+            var linkIcon = document.createElement('link');
+            linkIcon.rel = 'icon';
+            linkIcon.type = 'image/png';
+            linkIcon.sizes = '192x192';
+            linkIcon.href = pngUrl;
+            document.head.appendChild(linkIcon);
+        })();
+    </script>
 
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
@@ -89,7 +139,6 @@
     
     document.getElementById('mes-titulo').innerText = meses[mesActual] + ' ' + anioActual;
 
-    // Lunes = 1, Domingo = 7 (Ajuste para que la semana empiece el lunes)
     let primerDia = new Date(anioActual, mesActual, 1).getDay();
     primerDia = primerDia === 0 ? 7 : primerDia; 
     
@@ -98,20 +147,17 @@
     const tbody = document.getElementById('calendario-cuerpo');
     let fila = document.createElement('tr');
     
-    // Celdas vacías antes del primer día del mes
     for (let i = 1; i < primerDia; i++) {
         let celda = document.createElement('td');
         celda.className = 'empty';
         fila.appendChild(celda);
     }
 
-    // Días del mes
     for (let dia = 1; dia <= diasEnMes; dia++) {
         let celda = document.createElement('td');
         let clase = '';
         let textoExtra = '';
 
-        // Lógica de colores (Costo/Beneficio)
         if (dia >= 21 || dia <= 5) {
             clase = 'excelente';
         } else if (dia >= 6 && dia <= 14) {
@@ -120,7 +166,6 @@
             clase = 'malo';
         }
 
-        // Fechas Clave
         if (dia === 20) {
             clase += ' corte';
             textoExtra = '<br><small style="color: #c0392b;">CORTE</small>';
@@ -130,7 +175,6 @@
             textoExtra = '<br><small style="color: #27ae60;">VENCE</small>';
         }
 
-        // Marcar el día de HOY
         if (dia === diaActual) {
             clase += ' hoy';
             textoExtra += '<span class="etiqueta-hoy">HOY</span>';
@@ -140,14 +184,12 @@
         celda.innerHTML = dia + textoExtra;
         fila.appendChild(celda);
 
-        // Salto de línea al terminar la semana (Domingo)
         if ((dia + primerDia - 1) % 7 === 0) {
             tbody.appendChild(fila);
             fila = document.createElement('tr');
         }
     }
 
-    // Rellenar celdas vacías al final del mes
     let celdasRestantes = fila.children.length;
     if (celdasRestantes > 0 && celdasRestantes < 7) {
         for (let i = celdasRestantes; i < 7; i++) {

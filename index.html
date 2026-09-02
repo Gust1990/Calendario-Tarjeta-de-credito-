@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Interactivo de Tarjetas</title>
+    
+    <!-- Configuración PWA / Web App -->
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tarjetas">
+
+    <!-- Iconos SVG en Base64 -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCc+PHJlY3Qgd2lkdGg9JzI0JyBoZWlnaHQ9JzI0JyByeD0nNCcgZmlsbD0nIzJjM2U1MCcvPjxyZWN0IHg9JzInIHk9JzYnIHdpZHRoPTIwJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nI2ZmZicvPjxyZWN0IHg9JzInIHk9JzgnIHdpZHRoPTIwJyBoZWlnaHQ9JzMnIGZpbGw9JyNjMDM5MmInLz48cmVjdCB4PSc0JyB5PScxMycgd2lkdGg9JzQnIGhlaWdodD0nMicgZmlsbD0nIzI3YWU2MCcvPjwvc3ZnPg==">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCc+PHJlY3Qgd2lkdGg9JzI0JyBoZWlnaHQ9JzI0JyByeD0nNCcgZmlsbD0nIzJjM2U1MCcvPjxyZWN0IHg9JzInIHk9JzYnIHdpZHRoPTIwJyBoZWlnaHQ9JzEyJyByeD0nMicgZmlsbD0nI2ZmZicvPjxyZWN0IHg9JzInIHk9JzgnIHdpZHRoPTIwJyBoZWlnaHQ9JzMnIGZpbGw9JyNjMDM5MmInLz48cmVjdCB4PSc0JyB5PScxMycgd2lkdGg9JzQnIGhlaWdodD0nMicgZmlsbD0nIzI3YWU2MCcvPjwvc3ZnPg==">
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        .calendar-container { max-width: 750px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .month-title { font-size: 22px; font-weight: bold; margin-top: 10px; margin-bottom: 15px; color: #34495e; border-bottom: 2px solid #ddd; padding-bottom: 10px; text-align: center; text-transform: capitalize; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; width: 14.28%; position: relative; }
+        th { background-color: #2c3e50; color: white; font-size: 14px; }
+        td { height: 55px; vertical-align: middle; font-size: 15px; font-weight: bold; transition: all 0.3s; }
+        .empty { background-color: #fafafa; color: #ccc; }
+        
+        /* Colores Costo/Beneficio */
+        .excelente { background-color: #a9dfbf; color: #145a32; } /* Verde: 21 al 5 */
+        .regular { background-color: #f9e79f; color: #7d6608; } /* Amarillo: 6 al 14 */
+        .malo { background-color: #f5b7b1; color: #78281f; } /* Rojo: 15 al 20 */
+        
+        /* Fechas Clave */
+        .corte { border: 3px solid #c0392b; }
+        .vencimiento { border: 3px solid #27ae60; }
+        
+        /* Día Actual (Hoy) */
+        .hoy { 
+            border: 4px solid #2980b9 !important; 
+            box-shadow: 0 0 15px rgba(41, 128, 185, 0.6); 
+            transform: scale(1.05); 
+            z-index: 10; 
+            background-image: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3));
+        }
+        .etiqueta-hoy { display: block; font-size: 10px; color: #2980b9; font-weight: bold; margin-top: 2px; }
+
+        .legend { margin-top: 20px; font-size: 14px; line-height: 1.8; border-top: 1px solid #ddd; padding-top: 15px; }
+        .legend span { display: inline-block; width: 15px; height: 15px; margin-right: 5px; vertical-align: middle; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="calendar-container">
+    <h2 style="text-align: center; color: #2c3e50; margin-top: 0;">Estrategia de Compras</h2>
+    
+    <div id="mes-titulo" class="month-title"></div>
+    
+    <table id="calendario-tabla">
+        <thead>
+            <tr>
+                <th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th>
+            </tr>
+        </thead>
+        <tbody id="calendario-cuerpo">
+            <!-- El contenido se genera con JavaScript -->
+        </tbody>
+    </table>
+
+    <div class="legend">
+        <strong>¿Cuándo conviene usar la tarjeta?</strong><br>
+        <span style="background-color: #a9dfbf;"></span> <strong>Días Verdes (Del 21 al 5): MÁXIMO BENEFICIO.</strong> Ganás entre 42 y 28 días de plazo antes de pagar.<br>
+        <span style="background-color: #f9e79f;"></span> <strong>Días Amarillos (Del 6 al 14): PLAZO NORMAL.</strong> Tenés entre 27 y 19 días para pagar.<br>
+        <span style="background-color: #f5b7b1;"></span> <strong>Días Rojos (Del 15 al 20): PEOR MOMENTO.</strong> Pagás en apenas 12 a 17 días.<br>
+        <br>
+        <span style="border: 2px solid #c0392b; background-color: transparent;"></span> <strong>CORTE (20):</strong> Último día que entran gastos en el mes.<br>
+        <span style="border: 2px solid #27ae60; background-color: transparent;"></span> <strong>VENCIMIENTO (2):</strong> Día límite para pagar.<br>
+        <span style="border: 3px solid #2980b9; background-color: transparent;"></span> <strong>HOY:</strong> Tu día actual.
+    </div>
+</div>
+
+<script>
+    const hoy = new Date();
+    const diaActual = hoy.getDate();
+    const mesActual = hoy.getMonth();
+    const anioActual = hoy.getFullYear();
+
+    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    
+    document.getElementById('mes-titulo').innerText = meses[mesActual] + ' ' + anioActual;
+
+    // Lunes = 1, Domingo = 7 (Ajuste para que la semana empiece el lunes)
+    let primerDia = new Date(anioActual, mesActual, 1).getDay();
+    primerDia = primerDia === 0 ? 7 : primerDia; 
+    
+    const diasEnMes = new Date(anioActual, mesActual + 1, 0).getDate();
+    
+    const tbody = document.getElementById('calendario-cuerpo');
+    let fila = document.createElement('tr');
+    
+    // Celdas vacías antes del primer día del mes
+    for (let i = 1; i < primerDia; i++) {
+        let celda = document.createElement('td');
+        celda.className = 'empty';
+        fila.appendChild(celda);
+    }
+
+    // Días del mes
+    for (let dia = 1; dia <= diasEnMes; dia++) {
+        let celda = document.createElement('td');
+        let clase = '';
+        let textoExtra = '';
+
+        // Lógica de colores (Costo/Beneficio)
+        if (dia >= 21 || dia <= 5) {
+            clase = 'excelente';
+        } else if (dia >= 6 && dia <= 14) {
+            clase = 'regular';
+        } else if (dia >= 15 && dia <= 20) {
+            clase = 'malo';
+        }
+
+        // Fechas Clave
+        if (dia === 20) {
+            clase += ' corte';
+            textoExtra = '<br><small style="color: #c0392b;">CORTE</small>';
+        }
+        if (dia === 2) {
+            clase += ' vencimiento';
+            textoExtra = '<br><small style="color: #27ae60;">VENCE</small>';
+        }
+
+        // Marcar el día de HOY
+        if (dia === diaActual) {
+            clase += ' hoy';
+            textoExtra += '<span class="etiqueta-hoy">HOY</span>';
+        }
+
+        celda.className = clase;
+        celda.innerHTML = dia + textoExtra;
+        fila.appendChild(celda);
+
+        // Salto de línea al terminar la semana (Domingo)
+        if ((dia + primerDia - 1) % 7 === 0) {
+            tbody.appendChild(fila);
+            fila = document.createElement('tr');
+        }
+    }
+
+    // Rellenar celdas vacías al final del mes
+    let celdasRestantes = fila.children.length;
+    if (celdasRestantes > 0 && celdasRestantes < 7) {
+        for (let i = celdasRestantes; i < 7; i++) {
+            let celda = document.createElement('td');
+            celda.className = 'empty';
+            fila.appendChild(celda);
+        }
+        tbody.appendChild(fila);
+    }
+</script>
+
+</body>
+</html>

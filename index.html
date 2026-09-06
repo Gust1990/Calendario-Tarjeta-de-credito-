@@ -5,23 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario Interactivo de Tarjetas</title>
     
-    <!-- Configuración PWA / Web App -->
     <meta name="theme-color" content="#2c3e50">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Tarjetas">
 
-    <!-- Script que genera el icono PNG al instante para compatibilidad total -->
     <script>
         (function() {
-            // Creamos un canvas virtual
             var canvas = document.createElement('canvas');
             canvas.width = 192;
             canvas.height = 192;
             var ctx = canvas.getContext('2d');
 
-            // Función para dibujar rectángulos redondeados
             function roundRect(x, y, w, h, r, color) {
                 ctx.fillStyle = color;
                 ctx.beginPath();
@@ -34,29 +30,22 @@
                 ctx.fill();
             }
 
-            // Dibujamos el icono (Fondo azul)
             roundRect(0, 0, 192, 192, 32, '#2c3e50');
-            // Base de la tarjeta (Blanco)
             roundRect(16, 48, 160, 96, 16, '#ffffff');
             
-            // Banda magnética (Roja)
             ctx.fillStyle = '#c0392b';
             ctx.fillRect(16, 68, 160, 20);
             
-            // Chip de la tarjeta (Verde)
             ctx.fillStyle = '#27ae60';
             ctx.fillRect(32, 104, 32, 20);
 
-            // Convertimos el dibujo a PNG en Base64
             var pngUrl = canvas.toDataURL('image/png');
 
-            // Asignamos el PNG a iOS
             var linkApple = document.createElement('link');
             linkApple.rel = 'apple-touch-icon';
             linkApple.href = pngUrl;
             document.head.appendChild(linkApple);
 
-            // Asignamos el PNG a Android/Chrome
             var linkIcon = document.createElement('link');
             linkIcon.rel = 'icon';
             linkIcon.type = 'image/png';
@@ -70,39 +59,80 @@
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
         .calendar-container { max-width: 750px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .month-title { font-size: 22px; font-weight: bold; margin-top: 10px; margin-bottom: 15px; color: #34495e; border-bottom: 2px solid #ddd; padding-bottom: 10px; text-align: center; text-transform: capitalize; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; width: 14.28%; position: relative; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
+        th, td { border: 1px solid #ddd; padding: 8px 4px; text-align: center; position: relative; }
         th { background-color: #2c3e50; color: white; font-size: 14px; }
-        td { height: 55px; vertical-align: middle; font-size: 15px; font-weight: bold; transition: all 0.3s; }
-        .empty { background-color: #fafafa; color: #ccc; }
+        td { height: 80px; vertical-align: top; font-size: 16px; font-weight: bold; transition: all 0.3s; }
+        .empty { background-color: #f9f9f9; color: #ccc; border: 1px solid #eee; }
         
-        /* Colores Costo/Beneficio */
-        .excelente { background-color: #a9dfbf; color: #145a32; } /* Verde: 21 al 5 */
-        .regular { background-color: #f9e79f; color: #7d6608; } /* Amarillo: 6 al 14 */
-        .malo { background-color: #f5b7b1; color: #78281f; } /* Rojo: 15 al 20 */
+        .excelente { background-color: #d4edda; color: #155724; }
+        .regular { background-color: #fff3cd; color: #856404; }
+        .malo { background-color: #f8d7da; color: #721c24; }
         
-        /* Fechas Clave */
-        .corte { border: 3px solid #c0392b; }
-        .vencimiento { border: 3px solid #27ae60; }
+        .corte { border: 3px solid #e74c3c !important; }
+        .vencimiento { border: 3px solid #2ecc71 !important; }
         
-        /* Día Actual (Hoy) */
         .hoy { 
-            border: 4px solid #2980b9 !important; 
-            box-shadow: 0 0 15px rgba(41, 128, 185, 0.6); 
-            transform: scale(1.05); 
+            border: 4px solid #3498db !important; 
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.5); 
             z-index: 10; 
-            background-image: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3));
         }
-        .etiqueta-hoy { display: block; font-size: 10px; color: #2980b9; font-weight: bold; margin-top: 2px; }
+        
+        .etiqueta-fecha { display: block; font-size: 11px; font-weight: bold; margin-top: 2px; }
+        
+        .promo-badge {
+            display: block;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            border-radius: 4px;
+            padding: 4px 2px;
+            margin-top: 4px;
+            text-align: center;
+            line-height: 1.1;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .promo-mp { background-color: #009ee3; } 
+        .promo-carnave { background-color: #8e44ad; } 
+        .promo-comb { background-color: #34495e; } 
+        .promo-gomez { background-color: #e67e22; } 
 
-        .legend { margin-top: 20px; font-size: 14px; line-height: 1.8; border-top: 1px solid #ddd; padding-top: 15px; }
-        .legend span { display: inline-block; width: 15px; height: 15px; margin-right: 5px; vertical-align: middle; border-radius: 3px; }
+        .legend, .promo-info { margin-top: 20px; font-size: 14px; line-height: 1.6; border-top: 1px solid #ddd; padding-top: 15px; }
+        .legend span { display: inline-block; width: 16px; height: 16px; margin-right: 5px; vertical-align: middle; border-radius: 3px; border: 1px solid #bbb; }
+        .promo-info ul { padding-left: 20px; margin-top: 8px; }
+        .promo-info li { margin-bottom: 8px; }
+
+        /* Estilos para la sugerencia del día */
+        .sugerencia-hoy-container {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 8px;
+            background-color: #f0f8ff;
+            border-left: 5px solid #3498db;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .sugerencia-hoy-container h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sugerencia-lista-promos {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            color: #2c3e50;
+        }
     </style>
 </head>
 <body>
 
 <div class="calendar-container">
-    <h2 style="text-align: center; color: #2c3e50; margin-top: 0;">Estrategia de Compras</h2>
+    <h2 style="text-align: center; color: #2c3e50; margin-top: 0;">Estrategia de Compras y Promociones</h2>
     
     <div id="mes-titulo" class="month-title"></div>
     
@@ -117,15 +147,30 @@
         </tbody>
     </table>
 
+    <div class="promo-info">
+        <strong style="color: #2c3e50; font-size: 16px;">Promociones Vigentes</strong>
+        <ul>
+            <li><strong style="color:#009ee3;">Mercado Pago (1 Martes al mes):</strong> 15% OFF pagando con QR. <strong>Tope: $6.000 (1 solo uso mensual).</strong></li>
+            <li><strong style="color:#8e44ad;">Banco Nación (Miércoles):</strong> 30% OFF en Comercios / Carnave (BNA+ MODO). <strong>Tope: $12.000 (semanal).</strong></li>
+            <li><strong style="color:#34495e;">Banco Nación (Viernes):</strong> 20% OFF en Combustible (BNA+ MODO). <strong>Tope: $10.000 (mensual).</strong></li>
+            <li><strong style="color:#e67e22;">Gomez Pardo (Último domingo del mes):</strong> 3 Cuotas sin interés (Presencial con Visa/Mastercard).</li>
+        </ul>
+    </div>
+
     <div class="legend">
-        <strong>¿Cuándo conviene usar la tarjeta?</strong><br>
-        <span style="background-color: #a9dfbf;"></span> <strong>Días Verdes (Del 21 al 5): MÁXIMO BENEFICIO.</strong> Ganás entre 42 y 28 días de plazo antes de pagar.<br>
-        <span style="background-color: #f9e79f;"></span> <strong>Días Amarillos (Del 6 al 14): PLAZO NORMAL.</strong> Tenés entre 27 y 19 días para pagar.<br>
-        <span style="background-color: #f5b7b1;"></span> <strong>Días Rojos (Del 15 al 20): PEOR MOMENTO.</strong> Pagás en apenas 12 a 17 días.<br>
+        <strong>¿Cuándo conviene usar la tarjeta de crédito?</strong><br>
+        <span style="background-color: #d4edda;"></span> <strong>Días Verdes (Del 21 al 5): MÁXIMO BENEFICIO.</strong> Ganás entre 42 y 28 días de plazo antes de pagar.<br>
+        <span style="background-color: #fff3cd;"></span> <strong>Días Amarillos (Del 6 al 14): PLAZO NORMAL.</strong> Tenés entre 27 y 19 días para pagar.<br>
+        <span style="background-color: #f8d7da;"></span> <strong>Días Rojos (Del 15 al 20): PEOR MOMENTO.</strong> Pagás en apenas 12 a 17 días.<br>
         <br>
-        <span style="border: 2px solid #c0392b; background-color: transparent;"></span> <strong>CORTE (20):</strong> Último día que entran gastos en el mes.<br>
-        <span style="border: 2px solid #27ae60; background-color: transparent;"></span> <strong>VENCIMIENTO (2):</strong> Día límite para pagar.<br>
-        <span style="border: 3px solid #2980b9; background-color: transparent;"></span> <strong>HOY:</strong> Tu día actual.
+        <span style="border: 3px solid #e74c3c; background-color: transparent;"></span> <strong>CORTE (20):</strong> Último día que entran gastos en el mes.<br>
+        <span style="border: 3px solid #2ecc71; background-color: transparent;"></span> <strong>VENCIMIENTO (2):</strong> Día límite para pagar.<br>
+        <span style="border: 4px solid #3498db; background-color: transparent;"></span> <strong>HOY:</strong> Tu día actual.
+    </div>
+
+    <!-- Panel de Sugerencia Diaria -->
+    <div id="panel-sugerencia-hoy" class="sugerencia-hoy-container">
+        <!-- El contenido se inyecta por JS -->
     </div>
 </div>
 
@@ -147,16 +192,22 @@
     const tbody = document.getElementById('calendario-cuerpo');
     let fila = document.createElement('tr');
     
+    let mercadoPagoUsado = false;
+    
+    // Rellenar días en blanco previos
     for (let i = 1; i < primerDia; i++) {
         let celda = document.createElement('td');
         celda.className = 'empty';
         fila.appendChild(celda);
     }
 
+    // Dibujar los días del mes
     for (let dia = 1; dia <= diasEnMes; dia++) {
         let celda = document.createElement('td');
         let clase = '';
         let textoExtra = '';
+
+        let diaSemana = new Date(anioActual, mesActual, dia).getDay();
 
         if (dia >= 21 || dia <= 5) {
             clase = 'excelente';
@@ -168,20 +219,34 @@
 
         if (dia === 20) {
             clase += ' corte';
-            textoExtra = '<br><small style="color: #c0392b;">CORTE</small>';
+            textoExtra += '<span class="etiqueta-fecha" style="color: #c0392b;">CORTE</span>';
         }
         if (dia === 2) {
             clase += ' vencimiento';
-            textoExtra = '<br><small style="color: #27ae60;">VENCE</small>';
+            textoExtra += '<span class="etiqueta-fecha" style="color: #27ae60;">VENCE</span>';
         }
-
         if (dia === diaActual) {
             clase += ' hoy';
-            textoExtra += '<span class="etiqueta-hoy">HOY</span>';
+            textoExtra += '<span class="etiqueta-fecha" style="color: #2980b9;">HOY</span>';
+        }
+
+        // Promociones en el calendario
+        if (diaSemana === 2 && !mercadoPagoUsado) { 
+            textoExtra += '<span class="promo-badge promo-mp">📱 15% MP</span>';
+            mercadoPagoUsado = true;
+        }
+        if (diaSemana === 3) { 
+            textoExtra += '<span class="promo-badge promo-carnave">🥩 30% BNA</span>';
+        }
+        if (diaSemana === 5) { 
+            textoExtra += '<span class="promo-badge promo-comb">⛽ 20% BNA</span>';
+        }
+        if (diaSemana === 0 && dia > diasEnMes - 7) {
+            textoExtra += '<span class="promo-badge promo-gomez">🛒 3 Cuotas</span>';
         }
 
         celda.className = clase;
-        celda.innerHTML = dia + textoExtra;
+        celda.innerHTML = '<span style="font-size: 18px;">' + dia + '</span>' + textoExtra;
         fila.appendChild(celda);
 
         if ((dia + primerDia - 1) % 7 === 0) {
@@ -190,6 +255,7 @@
         }
     }
 
+    // Rellenar días en blanco finales
     let celdasRestantes = fila.children.length;
     if (celdasRestantes > 0 && celdasRestantes < 7) {
         for (let i = celdasRestantes; i < 7; i++) {
@@ -199,6 +265,47 @@
         }
         tbody.appendChild(fila);
     }
+
+    // LÓGICA PARA EL PANEL DE SUGERENCIA DE HOY
+    const diaSemanaHoy = hoy.getDay();
+    let promosHoy = [];
+
+    // Validar promos para el día actual
+    if (diaSemanaHoy === 2 && diaActual <= 7) {
+        promosHoy.push("<strong>Mercado Pago:</strong> 15% OFF pagando con QR (Tope: $6.000).");
+    }
+    if (diaSemanaHoy === 3) {
+        promosHoy.push("<strong>Banco Nación:</strong> 30% OFF en Comercios/Carnave (Tope: $12.000).");
+    }
+    if (diaSemanaHoy === 5) {
+        promosHoy.push("<strong>Banco Nación:</strong> 20% OFF en Combustible (Tope: $10.000).");
+    }
+    if (diaSemanaHoy === 0 && diaActual > diasEnMes - 7) {
+        promosHoy.push("<strong>Gomez Pardo:</strong> 3 Cuotas sin interés (Presencial).");
+    }
+
+    let textoPromociones = promosHoy.length > 0 
+        ? "¡Aprovechá! Hoy tenés los siguientes beneficios:<ul class='sugerencia-lista-promos'><li>" + promosHoy.join("</li><li>") + "</li></ul>"
+        : "<div style='margin-bottom:10px;'>No hay promociones destacadas registradas para el día de hoy.</div>";
+
+    let textoEstrategia = "";
+    if (diaActual >= 21 || diaActual <= 5) {
+        textoEstrategia = "✅ <strong>Estrategia ideal:</strong> Estás en un día verde. Aprovechá para hacer compras grandes; tenés el mayor plazo posible para pagar (hasta 42 días).";
+    } else if (diaActual >= 6 && diaActual <= 14) {
+        textoEstrategia = "⚠️ <strong>Estrategia regular:</strong> Estás en un día amarillo. Es un buen momento, pero con plazo de financiación normal (entre 19 y 27 días).";
+    } else if (diaActual >= 15 && diaActual <= 20) {
+        textoEstrategia = "❌ <strong>Estrategia de riesgo:</strong> Estás en un día rojo. Intentá no usar la tarjeta de crédito a menos que sea urgente, estás muy cerca del cierre.";
+    }
+
+    if (diaActual === 20) textoEstrategia += "<br><br>🚨 <strong>¡Atención! Hoy es el día de corte.</strong> Lo que compres hoy entra en el resumen actual, lo de mañana pasa al mes que viene.";
+    if (diaActual === 2) textoEstrategia += "<br><br>💰 <strong>¡Atención! Hoy vence la tarjeta.</strong>";
+
+    document.getElementById('panel-sugerencia-hoy').innerHTML = `
+        <h3>📅 Resumen para hoy, ${diaActual} de ${meses[mesActual]}</h3>
+        ${textoPromociones}
+        ${textoEstrategia}
+    `;
+
 </script>
 
 </body>

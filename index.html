@@ -151,7 +151,7 @@
         <strong style="color: #2c3e50; font-size: 16px;">Promociones Vigentes</strong>
         <ul>
             <li><strong style="color:#009ee3;">Mercado Pago (1 Martes al mes):</strong> 15% OFF pagando con QR. <strong>Tope: $6.000 (1 solo uso mensual).</strong></li>
-            <li><strong style="color:#8e44ad;">Banco Nación (Miércoles):</strong> 30% OFF en Comercios / Carnave (BNA+ MODO). <strong>Tope: $12.000 (semanal).</strong></li>
+            <li><strong style="color:#8e44ad;">Banco Nación (Viernes):</strong> 30% OFF en Comercios / Carnave (BNA+ MODO). <strong>Tope: $12.000 (semanal).</strong></li>
             <li><strong style="color:#34495e;">Banco Nación (Viernes):</strong> 20% OFF en Combustible (BNA+ MODO). <strong>Tope: $10.000 (mensual).</strong></li>
             <li><strong style="color:#e67e22;">Gomez Pardo (Último domingo del mes):</strong> 3 Cuotas sin interés (Presencial con Visa/Mastercard).</li>
         </ul>
@@ -235,10 +235,8 @@
             textoExtra += '<span class="promo-badge promo-mp">📱 15% MP</span>';
             mercadoPagoUsado = true;
         }
-        if (diaSemana === 3) { 
-            textoExtra += '<span class="promo-badge promo-carnave">🥩 30% BNA</span>';
-        }
         if (diaSemana === 5) { 
+            textoExtra += '<span class="promo-badge promo-carnave">🥩 30% BNA</span>';
             textoExtra += '<span class="promo-badge promo-comb">⛽ 20% BNA</span>';
         }
         if (diaSemana === 0 && dia > diasEnMes - 7) {
@@ -274,10 +272,8 @@
     if (diaSemanaHoy === 2 && diaActual <= 7) {
         promosHoy.push("<strong>Mercado Pago:</strong> 15% OFF pagando con QR (Tope: $6.000).");
     }
-    if (diaSemanaHoy === 3) {
-        promosHoy.push("<strong>Banco Nación:</strong> 30% OFF en Comercios/Carnave (Tope: $12.000).");
-    }
     if (diaSemanaHoy === 5) {
+        promosHoy.push("<strong>Banco Nación:</strong> 30% OFF en Comercios/Carnave (Tope: $12.000).");
         promosHoy.push("<strong>Banco Nación:</strong> 20% OFF en Combustible (Tope: $10.000).");
     }
     if (diaSemanaHoy === 0 && diaActual > diasEnMes - 7) {

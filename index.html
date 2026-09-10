@@ -102,7 +102,6 @@
         .promo-info ul { padding-left: 20px; margin-top: 8px; }
         .promo-info li { margin-bottom: 8px; }
 
-        /* Estilos para la sugerencia del día */
         .sugerencia-hoy-container {
             margin-top: 25px;
             padding: 18px;
@@ -126,6 +125,63 @@
             margin-bottom: 15px;
             padding-left: 20px;
             color: #2c3e50;
+        }
+
+        /* --- ESTILOS DE LA CALCULADORA --- */
+        .calculadora-container {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            border: 2px solid #2c3e50;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .calculadora-container h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .calc-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        .calc-group {
+            flex: 1;
+            min-width: 140px;
+            max-width: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+        .calc-group label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .calc-group input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s;
+            text-align: center;
+        }
+        .calc-group input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52,152,219,0.3);
+        }
+        .calc-resultados {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 5px solid #2ecc71;
+            text-align: center;
         }
     </style>
 </head>
@@ -172,6 +228,25 @@
     <div id="panel-sugerencia-hoy" class="sugerencia-hoy-container">
         <!-- El contenido se inyecta por JS -->
     </div>
+
+    <!-- CALCULADORA INTERACTIVA DIRECTA -->
+    <div class="calculadora-container">
+        <h3>🧮 Calculadora de Gasto Ideal</h3>
+        <div class="calc-row">
+            <div class="calc-group">
+                <label for="calc-descuento">Descuento (%)</label>
+                <input type="number" id="calc-descuento" placeholder="Ej: 25" oninput="calcularPromo()">
+            </div>
+            <div class="calc-group">
+                <label for="calc-tope">Tope de Reintegro ($)</label>
+                <input type="number" id="calc-tope" placeholder="Ej: 13000" oninput="calcularPromo()">
+            </div>
+        </div>
+        <div class="calc-resultados">
+            <div id="res-ideal" style="font-size: 16px; color: #34495e;">Completá el % de descuento y el tope para saber cuánto tenés que gastar.</div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -194,14 +269,12 @@
     
     let mercadoPagoUsado = false;
     
-    // Rellenar días en blanco previos
     for (let i = 1; i < primerDia; i++) {
         let celda = document.createElement('td');
         celda.className = 'empty';
         fila.appendChild(celda);
     }
 
-    // Dibujar los días del mes
     for (let dia = 1; dia <= diasEnMes; dia++) {
         let celda = document.createElement('td');
         let clase = '';
@@ -230,7 +303,6 @@
             textoExtra += '<span class="etiqueta-fecha" style="color: #2980b9;">HOY</span>';
         }
 
-        // Promociones en el calendario
         if (diaSemana === 2 && !mercadoPagoUsado) { 
             textoExtra += '<span class="promo-badge promo-mp">🥩 15% MP</span>';
             mercadoPagoUsado = true;
@@ -253,7 +325,6 @@
         }
     }
 
-    // Rellenar días en blanco finales
     let celdasRestantes = fila.children.length;
     if (celdasRestantes > 0 && celdasRestantes < 7) {
         for (let i = celdasRestantes; i < 7; i++) {
@@ -264,11 +335,9 @@
         tbody.appendChild(fila);
     }
 
-    // LÓGICA PARA EL PANEL DE SUGERENCIA DE HOY
     const diaSemanaHoy = hoy.getDay();
     let promosHoy = [];
 
-    // Validar promos para el día actual
     if (diaSemanaHoy === 2 && diaActual <= 7) {
         promosHoy.push("<strong>Mercado Pago:</strong> 15% OFF pagando con QR (Tope: $6.000).");
     }
@@ -301,6 +370,20 @@
         ${textoPromociones}
         ${textoEstrategia}
     `;
+
+    // --- LÓGICA DE LA CALCULADORA SIMPLIFICADA ---
+    function calcularPromo() {
+        const descuento = parseFloat(document.getElementById('calc-descuento').value) || 0;
+        const tope = parseFloat(document.getElementById('calc-tope').value) || 0;
+        const resIdeal = document.getElementById('res-ideal');
+
+        if (descuento > 0 && tope > 0) {
+            const gastoIdeal = tope / (descuento / 100);
+            resIdeal.innerHTML = `🎯 Tu gasto ideal para alcanzar el tope es:<br><strong style="font-size: 24px; color: #27ae60; display: inline-block; margin-top: 8px;">$${gastoIdeal.toFixed(2)}</strong>`;
+        } else {
+            resIdeal.innerHTML = 'Completá el % de descuento y el tope para saber cuánto tenés que gastar.';
+        }
+    }
 
 </script>
 
